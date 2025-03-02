@@ -1,8 +1,8 @@
 import { OpenAI } from "openai";
-import { Message, ToolModel } from '../types';
-import { Tool } from '../tool';
-import { LLMConnector } from './types';
-import { logger } from '../logger';
+import { Message, ToolModel } from "../types";
+import { Tool } from "../tool";
+import { LLMConnector } from "./types";
+import { logger } from "../logger";
 import dedent from "dedent";
 
 export class OpenAIConnector implements LLMConnector {
@@ -11,28 +11,34 @@ export class OpenAIConnector implements LLMConnector {
   private tools: ToolModel[] = [];
 
   constructor({ model }: { model: string }) {
-    if (!process.env['OPENAI_API_KEY']) {
-      throw new Error('OPENAI_API_KEY is not set');
+    if (!process.env["OPENAI_API_KEY"]) {
+      throw new Error("OPENAI_API_KEY is not set");
     }
 
     this.client = new OpenAI({
-      apiKey: process.env['OPENAI_API_KEY'],
+      apiKey: process.env["OPENAI_API_KEY"],
     });
     this.model = model;
   }
 
   public setTools(tools: Tool<any>[]) {
-    this.tools = tools.map(t => t.model);
+    this.tools = tools.map((t) => t.model);
   }
 
   public async chat(messages: Message[]): Promise<Message> {
-    const openAImessages = messages.map(m => ({ ...m, role: m.role === 'system' ? 'developer' : m.role }) as OpenAI.Chat.Completions.ChatCompletionMessageParam);
-    
+    const openAImessages = messages.map(
+      (m) =>
+        ({
+          ...m,
+          role: m.role === "system" ? "developer" : m.role,
+        }) as OpenAI.Chat.Completions.ChatCompletionMessageParam,
+    );
+
     const response = await this.client.chat.completions.create({
       model: this.model,
       messages: openAImessages,
       tools: this.tools,
-      tool_choice: 'auto',
+      tool_choice: "auto",
       store: true,
     });
 
@@ -41,8 +47,8 @@ export class OpenAIConnector implements LLMConnector {
     this.logStats(response);
 
     return {
-      role: choice!.message.role || 'assistant',
-      content: choice!.message.content || '',
+      role: choice!.message.role || "assistant",
+      content: choice!.message.content || "",
       tool_calls: choice!.message.tool_calls || [],
     };
   }
@@ -62,6 +68,6 @@ export class OpenAIConnector implements LLMConnector {
       total_tokens:              ${usage.total_tokens}
       completion_tokens_details: ${JSON.stringify(usage.completion_tokens_details)}
       prompt_tokens_details:     ${JSON.stringify(usage.prompt_tokens_details)}
-    `)
+    `);
   }
-} 
+}

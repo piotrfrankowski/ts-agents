@@ -7,18 +7,36 @@ import dedent from "dedent";
 export class Agent {
   public readonly name: string;
   public readonly id = randomUUID();
-  public runName: string = '';
+  public runName: string = "";
   private messages: Message[];
   private llm: LLM;
   private context: Agent[];
 
-  constructor({ persona, task, tools, llm, context }: { persona: Persona, task: string, tools: Tool<any>[], llm: LLM, context: Agent[] }) {
-    const toolsList = tools.map(t => `${t.name}: ${t.description}`).join(', ');
-    const toolHints = tools.filter(t => t.hint).map(t => `When using the ${t.name} tool ${t.hint}`).join('.\n');
+  constructor({
+    persona,
+    task,
+    tools,
+    llm,
+    context,
+  }: {
+    persona: Persona;
+    task: string;
+    tools: Tool<any>[];
+    llm: LLM;
+    context: Agent[];
+  }) {
+    const toolsList = tools
+      .map((t) => `${t.name}: ${t.description}`)
+      .join(", ");
+    const toolHints = tools
+      .filter((t) => t.hint)
+      .map((t) => `When using the ${t.name} tool ${t.hint}`)
+      .join(".\n");
     this.name = persona.role;
-    this.messages = [{
-      role: 'system',
-      content: dedent`You are a ${persona.role}. ${persona.background}.
+    this.messages = [
+      {
+        role: "system",
+        content: dedent`You are a ${persona.role}. ${persona.background}.
         ${persona.goal}.
         You have access to the following tools: ${toolsList}.
         ${toolHints}.
@@ -27,7 +45,8 @@ export class Agent {
         Go back and forth between the tools and the context until you have a complete understanding of the task.
         Mark your final response with </final> tag if you have finished the task and no longer need to use the tools.
         Do not use </final> tag if you have further work to do.`,
-    }];
+      },
+    ];
 
     this.llm = llm;
     this.context = context;
@@ -35,7 +54,7 @@ export class Agent {
     this.llm.setTools(tools);
 
     this.messages.push({
-      role: 'user',
+      role: "user",
       content: task,
     });
   }
@@ -44,11 +63,15 @@ export class Agent {
     this.runName = runName;
   }
 
-  public async execute(input: any, memory: Record<Agent['id'], string>, isGraph = false): Promise<{ final: string, withThoughts: string }> {
+  public async execute(
+    input: any,
+    memory: Record<Agent["id"], string>,
+    isGraph = false,
+  ): Promise<{ final: string; withThoughts: string }> {
     if (input) {
       this.messages.push({
-        role: 'user',
-        content: `You received the following input: ${typeof input === 'string' ? input : JSON.stringify(input)}`,
+        role: "user",
+        content: `You received the following input: ${typeof input === "string" ? input : JSON.stringify(input)}`,
       });
     }
 
@@ -57,9 +80,9 @@ export class Agent {
         const memoryItem = memory[id];
         if (memoryItem) {
           this.messages.push({
-            role: 'system',
-            content: `Additional context provided by the ${name}: ${memoryItem}`
-          })
+            role: "system",
+            content: `Additional context provided by the ${name}: ${memoryItem}`,
+          });
         }
       }
     }

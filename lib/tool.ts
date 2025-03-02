@@ -9,20 +9,43 @@ export class Tool<T extends Record<string, any>> {
   private readonly fn: (args: T) => Promise<string>;
   private readonly requiredParams: string[];
 
-  constructor({ name, description, hint, params, fn }: { name: string, description: string, hint: string, params: ToolParams[], fn: (args: T) => Promise<string> }) {
+  constructor({
+    name,
+    description,
+    hint,
+    params,
+    fn,
+  }: {
+    name: string;
+    description: string;
+    hint: string;
+    params: ToolParams[];
+    fn: (args: T) => Promise<string>;
+  }) {
     this.name = name;
     this.description = description;
     this.hint = hint;
-    this.requiredParams = params.filter(param => param.required).map(param => param.name);
+    this.requiredParams = params
+      .filter((param) => param.required)
+      .map((param) => param.name);
     this.fn = fn;
     this.model = {
-      type: 'function',
+      type: "function",
       function: {
         name,
         description,
         parameters: {
-          type: 'object',
-          properties: params.reduce((acc, param) => ({ ...acc, [param.name]: { type: param.type, description: param.description } }), {}),
+          type: "object",
+          properties: params.reduce(
+            (acc, param) => ({
+              ...acc,
+              [param.name]: {
+                type: param.type,
+                description: param.description,
+              },
+            }),
+            {},
+          ),
           required: this.requiredParams,
         },
       },
@@ -40,4 +63,3 @@ export class Tool<T extends Record<string, any>> {
     return this.fn(args);
   }
 }
-

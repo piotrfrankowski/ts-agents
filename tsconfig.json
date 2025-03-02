@@ -41,11 +41,7 @@
     "types": ["node"],
     "verbatimModuleSyntax": false
   },
-  "include": [
-    "index.ts",
-    "lib/**/*.ts",
-    "tools/**/*.ts",
-  ],
+  "include": ["index.ts", "lib/**/*.ts", "tools/**/*.ts"],
   "ts-node": {
     "files": true
   },

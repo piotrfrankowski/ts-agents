@@ -1,9 +1,9 @@
-import { Flow } from '../../lib';
-import { getAgents } from './agents';
+import { Flow } from "../../lib";
+import { getAgents } from "./agents";
 
 const coinName = process.argv[2];
 if (!coinName) {
-  console.error('Please provide a coin name');
+  console.error("Please provide a coin name");
   process.exit(1);
 }
 
