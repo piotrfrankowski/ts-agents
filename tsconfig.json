@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    // @tsconfig/strictest
+    "strict": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // "isolatedModules": true,
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "checkJs": true,
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // @tsconfig/node18
+    "lib": ["es2023"],
+    "module": "node16",
+    "target": "es2022",
+    "moduleResolution": "node16",
+
+    // Other
+    "composite": false,
+    "incremental": false,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "plugins": [{ "name": "typescript-eslint-language-service" }],
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "types": ["node"],
+    "verbatimModuleSyntax": false
+  },
+  "include": [
+    "index.ts",
+    "lib/**/*.ts",
+    "tools/**/*.ts",
+  ],
+  "ts-node": {
+    "files": true
+  },
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "ts-agents",
+  "_version": "1.0.0"
+}
