@@ -1,3 +1,10 @@
+import dedent from "dedent";
+import { Agent, LLM } from "../../lib";
+import { tools } from "./tools";
+
+const llm = new LLM({ model: "ds-tools-wide", connector: "ollama" });
+
+const readme = `
 # TS-Agents 🤖
 
 **TS-Agents** is an agentic framework for TypeScript. It allows you to build multi-agent systems with ease. It allows creating agents, providing them with tools and memory and creating flows to orchestrate them.
@@ -25,7 +32,7 @@ LLM class is using a conncetor to connect to the LLM provider. Currently OpenAI 
 - [Parallel](./example/parallel/index.ts) - Example of executing multiple agents in parallel
 - [Multiagent](./example/multiagent/index.ts) - Example of using multiple agents that feed into each other in a flow
 
-All of the examples are using one LLM instance for all agents. You can tweak it by changing `model` parameter in the `LLM` class constructor located in each `agents.ts` file.
+All of the examples are using one LLM instance for all agents. You can tweak it by changing \`model\` parameter in the \`LLM\` class constructor located in each \`agents.ts\` file.
 
 ## Project Goals 🚀
 
@@ -33,7 +40,7 @@ All of the examples are using one LLM instance for all agents. You can tweak it 
 - ✅ Create an agent that can be instructed to perform a task using provided LLM as a base
 - ✅ Give the agent access to tools and performing tool calls
 - ✅ Add example tools
-- ✅ Create a flow where multiple agents can be executed in series
+- ✅ Create a flow where one multiple agents can be executed in series
 - ✅ Add the ability to use previous agents' repsonses as context for the next one
 - ✅ Add an option to execute multiple agents in parallel
 - 🛠️ Crate a graph based flow to orchestrate complex agent flows
@@ -54,24 +61,24 @@ All of the examples are using one LLM instance for all agents. You can tweak it 
 
 ## How to Get Started
 
-If you want to use OpenAI, copy the `.env.example` file to `.env` and add your API key.
+If you want to use OpenAI, copy the \`.env.example\` file to \`.env\` and add your API key.
 If you want to use Ollama, make sure it is running and the model(s) you want to use is downloaded.
 
 Install dependencies:
-```bash
+\`\`\`bash
 yarn install
-```
+\`\`\`
 
 Run the example:
-```bash
+\`\`\`bash
 yarn example:openai
 yarn example:parallel
 yarn example:multiagent
-```
+\`\`\`
 
 ## Structure
 
-```
+\`\`\`
 ts-agents
 ├── lib
 │   ├── connectors/      - Connectors for the LLM providers
@@ -87,9 +94,70 @@ ts-agents
     ├── parallel/
     ├── multiagent/
     └── metadata/
-```
+\`\`\`
 
 ## Contributions
 
 TS-Agents is open for contributions and feedback! By no means am I the expert in the field and I'll be happy to take suggestions.
 If you have ideas, improvements, or bug reports, feel free to create an issue or open a pull request.
+`
+
+export const getAgents = (project: string) => {
+  const techincalWriter = new Agent({
+    persona: {
+      role: "Technical Writer",
+      background:
+        "You specialize in writing technical articles describing new projects.",
+      goal: dedent`Writing a technical article utilizing the provided project README.md file.
+      You are given a set of tools read_file and read_repo that allow you to read the file structure of the repository and content of files repectively. 
+      In order to better understand the ${project} project, you can read the code from the files.`,
+    },
+    tools,
+    llm,
+    context: [],
+    task: `Write a technical article describing the new ${project} project. Be verbose and detailed.
+You can look into the code, but base it on the README.md file which content is provide below:
+${readme}
+`,
+  });
+
+  const redactor = new Agent({
+    persona: {
+      role: "Editor",
+      background: "You specialize in redacting and editing documents.",
+      goal: dedent`Redacting and editing documents for a technical article.
+      You are given a article created by technical writer.
+      Review the article and provide feedback on the article.`,
+    },
+    tools: [],
+    llm,
+    context: [techincalWriter],
+    task: dedent`You are given an article created by technical writer on the ${project} project.
+    Review the article and provide feedback on the article. The article is mainly based on the README.md file which content is provide below:
+    ${readme}
+    `,
+  });
+
+  const seniorWriter = new Agent({
+    persona: {
+      role: "Senior Writer",
+      background:
+        "You specialize in writing technical articles",
+      goal: `Helping to write an engaging technical article on the ${project} project.
+      You are given a set of tools read_file and read_repo that allow you to read the file structure of the repository and content of files repectively. 
+      In order to better understand the ${project} project, you can read the code from the files.`,
+    },
+    tools,
+    llm,
+    context: [techincalWriter, redactor],
+    task: dedent`You are given a technical article created by technical writer and a review of the article created by the Editor.
+    Review the article and implement the changes suggested by the Editor.
+    Make sure to include motivation for starting the project and the call for feedback from the community.
+    Be verbose and detailed.
+    The article is mainly based on the README.md file which content is provide below:
+    ${readme}
+    `,
+  });
+
+  return [techincalWriter, redactor, seniorWriter];
+};

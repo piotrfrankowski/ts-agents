@@ -1,0 +1,60 @@
+FROM deepseek-r1:70b
+
+PARAMETER temperature 1
+PARAMETER num_ctx 12228
+PARAMETER stop "<|start_header_id|>"
+PARAMETER stop "<|end_header_id|>"
+PARAMETER stop "<|eot_id|>"
+PARAMETER stop "<｜begin▁of▁sentence｜>"
+PARAMETER stop "<｜end▁of▁sentence｜>"
+PARAMETER stop "<｜User｜>"
+PARAMETER stop "<｜Assistant｜>"
+
+TEMPLATE """
+{{- if or .System .Tools }}<｜begin▁of▁sentence｜>system<｜end▁of▁sentence｜>
+{{- if .System }}
+
+{{ .System }}
+{{- end }}
+{{- if .Tools }}
+
+When you receive a tool call response, use the output to format an answer to the orginal user question.
+
+You are a helpful assistant with tool calling capabilities.
+{{- end }}<|eot_id|>
+{{- end }}
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 }}
+{{- if eq .Role "user" }}<｜begin▁of▁sentence｜>user<｜end▁of▁sentence｜>
+{{- if and $.Tools $last }}
+
+Given the following functions, please respond with a JSON for a function call with its proper arguments that best answers the given prompt.
+
+Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.
+
+{{ range $.Tools }}
+{{- . }}
+{{ end }}
+Question: {{ .Content }}<｜end▁of▁sentence｜>
+{{- else }}
+
+{{ .Content }}<｜end▁of▁sentence｜>
+{{- end }}{{ if $last }}<｜Assistant｜>
+
+{{ end }}
+{{- else if eq .Role "assistant" }}<｜Assistant｜>
+{{- if .ToolCalls }}
+{{ range .ToolCalls }}
+{"name": "{{ .Function.Name }}", "parameters": {{ .Function.Arguments }}}{{ end }}
+{{- else }}
+
+{{ .Content }}
+{{- end }}{{ if not $last }}<｜end_of_sentence｜>{{ end }}
+{{- else if eq .Role "tool" }}<|start_header_id|>ipython<|end_header_id|>
+
+{{ .Content }}<｜end▁of▁sentence｜>{{ if $last }}<｜Assistant｜>
+
+{{ end }}
+{{- end }}
+{{- end }}
+"""

@@ -1,0 +1,46 @@
+{
+  "name": "ts-agents",
+  "version": "0.0.1",
+  "description": "Multi-agent framework for TypeScript",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piotrfrankowski/ts-agents.git"
+  },
+  "keywords": [
+    "ts-agents",
+    "ai-agents",
+    "ai",
+    "agents",
+    "framework",
+    "aggentic"
+  ],
+  "author": "piotrfrankowski",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/piotrfrankowski/ts-agents/issues"
+  },
+  "homepage": "https://github.com/piotrfrankowski/ts-agents#readme",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "format": "prettier --write '**/*.{ts,json}'",
+    "example:openai": "ts-node example/openai/index.ts",
+    "example:multiagent": "ts-node example/multiagent/index.ts",
+    "example:parallel": "ts-node example/parallel/index.ts",
+    "example:metadata": "ts-node example/metadata/index.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dedent": "^1.5.3",
+    "directory-tree": "^3.5.2",
+    "dotenv": "^16.4.7",
+    "openai": "^4.85.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "prettier": "^3.5.2"
+  }
+}
