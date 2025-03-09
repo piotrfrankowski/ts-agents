@@ -17,7 +17,7 @@ The framework is built around the concept of agents. Agents are the main buildin
 
 Building a flow is done by passing a list of agents to be executed. Each agent is passed an LLM instance and a list of tools. They can also have previous agents passed as context. Flow can utilize different LLMs to execute different agents.
 
-LLM class is using a conncetor to connect to the LLM provider. Currently OpenAI and Ollama 🦙 are supported, but you can also pass a custom LLM connector.
+LLM class is using a connector to connect to the LLM provider. Currently OpenAI and Ollama 🦙 are supported, but you can also pass a custom LLM connector.
 
 ## Examples:
 
