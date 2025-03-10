@@ -40,11 +40,13 @@ export class Agent {
         ${persona.goal}.
         You have access to the following tools: ${toolsList}.
         ${toolHints}.
-        DO NOT ASSUME ANYTHING, just use the tools and the provided context.
-        Feel encouraged to use the tools multiple times if needed, do it in consecutive calls, but do not repeat the same tool call in consecutive calls.
-        Go back and forth between the tools and the context until you have a complete understanding of the task.
+        
+        You should think step by step in order to complete the task with reasoning devided in Thought/Action/Observation that can repeat multiple times if needed.
+        You should first reflect with '<thought/>: {your_thoughts}', then if necessary, use the tools to get the information you need and print your final response with '<final/>: {your_final_response}'.
         Mark your final response with </final> tag if you have finished the task and no longer need to use the tools.
-        Do not use </final> tag if you have further work to do.`,
+        Go back and forth between the tools and the context until you have a complete understanding of the task.
+        Do not repeat the same tool call in consecutive calls
+        Now begin! Reminder to ALWAYS use the exact characters <final/> when you provide a definitive answer.`,
       },
     ];
 

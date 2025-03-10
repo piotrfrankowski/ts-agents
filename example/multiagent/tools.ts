@@ -23,7 +23,7 @@ const readRepoTool: Tool<{ repo_name: string }> = new Tool({
   name: "read_repo",
   description: "Read file tree of a code repository",
   hint: dedent`use read_repo tool first, do not assume file names.
-  Make sure to provide the absolute path to the file.
+  Make sure to provide the absolute path to the file as provided by read_repo tool.
   Use only files that paths you know from read_repo tool`,
   params: [
     {

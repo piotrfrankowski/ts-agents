@@ -34,7 +34,11 @@ export const readRepository = (
     basePath,
     exclude,
     limitToDir,
-  }: { basePath?: string; exclude?: RegExp | RegExp[]; limitToDir?: string } = {},
+  }: {
+    basePath?: string;
+    exclude?: RegExp | RegExp[];
+    limitToDir?: string;
+  } = {},
 ) => {
   if (!name) {
     return "No repository name provided";
@@ -44,8 +48,8 @@ export const readRepository = (
   }
 
   const path = basePath
-    ? `${basePath}/${name}${limitToDir ? `/${limitToDir}` : ""}`
-    : name;
+  ? `${basePath}/${name}${limitToDir ? `/${limitToDir}` : ""}`
+  : name;
   const tree = dirTree(path, { exclude: exclude || [] });
 
   if (!tree) {

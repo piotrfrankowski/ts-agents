@@ -15,14 +15,16 @@ export class LLM {
   constructor({
     model,
     connector,
+    options
   }: {
     model: string;
     connector: LLMConnector | "ollama" | "openai";
+    options?: Record<string, any>;
   }) {
     if (connector === "ollama") {
-      this.connector = new OllamaConnector({ model });
+      this.connector = new OllamaConnector({ model, options });
     } else if (connector === "openai") {
-      this.connector = new OpenAIConnector({ model });
+      this.connector = new OpenAIConnector({ model, options });
     } else {
       this.connector = connector;
     }
@@ -93,7 +95,7 @@ export class LLM {
         messages.push({
           role: "user",
           content:
-            "Continue your work. Use the file reading tool if needed. Mark your final response with </final> tag if you no longer need to use the tools.",
+            "Continue your work. Use the tools if needed. Mark your final response with </final> tag if you have achieved your goal.",
         });
 
         continue;

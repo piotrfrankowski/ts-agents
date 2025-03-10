@@ -10,13 +10,14 @@ export class OpenAIConnector implements LLMConnector {
   private readonly client: OpenAI;
   private tools: ToolModel[] = [];
 
-  constructor({ model }: { model: string }) {
+  constructor({ model, options }: { model: string, options?: any }) {
     if (!process.env["OPENAI_API_KEY"]) {
       throw new Error("OPENAI_API_KEY is not set");
     }
 
     this.client = new OpenAI({
       apiKey: process.env["OPENAI_API_KEY"],
+      baseURL: options?.url || "https://api.openai.com/v1",
     });
     this.model = model;
   }

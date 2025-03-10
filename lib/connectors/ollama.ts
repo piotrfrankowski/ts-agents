@@ -29,9 +29,11 @@ export class OllamaConnector implements LLMConnector {
   private readonly client: AxiosInstance;
   private tools: ToolModel[] = [];
 
-  constructor({ model }: { model: string }) {
+  
+  constructor({ model, options }: { model: string, options?: any }) {
+    const url = options?.url || "http://localhost:11434/";
     this.client = axios.create({
-      baseURL: "http://localhost:11434/",
+      baseURL: url,
       headers: {
         "Content-Type": "application/json",
       },
